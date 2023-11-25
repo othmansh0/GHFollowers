@@ -31,7 +31,7 @@ class SearchVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true // needed here as viewWillAppear gets called every time the view appears while viewDidLoad gets called only one time
+        navigationController?.setNavigationBarHidden(true, animated: true) // needed here as viewWillAppear gets called every time the view appears while viewDidLoad gets called only one time
     }
     
     //MARK: Handle Logic
