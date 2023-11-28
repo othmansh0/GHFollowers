@@ -10,7 +10,7 @@
 import UIKit
 
 class SearchVC: UIViewController {
-
+    
     let logoImageView = UIImageView()
     let usernameTextField = GFTextField()
     let callToActionButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
@@ -27,11 +27,21 @@ class SearchVC: UIViewController {
         configureCallToActionButton()
         createDismissKeyboardTapGesure()
         usernameTextField.delegate = self
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.shadowImage = nil
+        appearance.shadowColor = nil
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.setNavigationBarHidden(true, animated: true) // needed here as viewWillAppear gets called every time the view appears while viewDidLoad gets called only one time
+        
     }
     
     //MARK: Handle Logic
@@ -51,12 +61,14 @@ class SearchVC: UIViewController {
         let followerListVC = FollowerListVC()
         followerListVC.username = usernameTextField.text
         followerListVC.title = usernameTextField.text
+        //        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        //        self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.pushViewController(followerListVC, animated: true )
     }
     
     
     
- 
+    
     
     
     //MARK: Configure UI
@@ -64,13 +76,13 @@ class SearchVC: UIViewController {
         view.addSubview(logoImageView)
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         logoImageView.image = UIImage(named: "gh-logo")
-   
+        
         NSLayoutConstraint.activate([
             logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.heightAnchor.constraint(equalToConstant: 200),
             logoImageView.widthAnchor.constraint(equalToConstant: 200)
-        
+            
         ])
     }
     
@@ -83,7 +95,7 @@ class SearchVC: UIViewController {
             usernameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 50),
             usernameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -50),
             usernameTextField.heightAnchor.constraint(equalToConstant: 50)
-//            usernameTextField.widthAnchor.constraint(equalToConstant: 50 )
+            //            usernameTextField.widthAnchor.constraint(equalToConstant: 50 )
         ])
     }
     
@@ -97,12 +109,12 @@ class SearchVC: UIViewController {
             callToActionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             callToActionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             callToActionButton.heightAnchor.constraint(equalToConstant: 50)
-        
+            
         ])
     }
- 
     
-   
+    
+    
     
 }
 

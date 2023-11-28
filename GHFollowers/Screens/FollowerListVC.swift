@@ -10,8 +10,10 @@ import UIKit
 class FollowerListVC: UIViewController {
 
     var username: String!
+    var followers = [Follower]()
     var collectionView: UICollectionView!
-
+    var page = 1
+    var hasMoreFollowers = true
     enum Section {
         case main
     }
@@ -20,15 +22,23 @@ class FollowerListVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+
+        
         configureCollectionView()
         configureViewController()
         configureDataSource()
-        getFollowers()
+        collectionView.delegate = self
+        getFollowers(username: username, page: page)
+        
        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+   
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
@@ -67,15 +77,20 @@ class FollowerListVC: UIViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
-    func getFollowers() {
-        NetworkManager.shared.getFollowers(for: username, page: 1) { [weak self] result in
+    func getFollowers(username: String, page: Int) {
+        showLoadingView()
+        NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
+           
+           
             guard let self = self else { return }
-            
+            self.dismissLoadingView()
             switch result {
             case .success(let followers):
-                            print("followers count = \(followers.count)")
-                            print(followers)
-                self.updateData(followers: followers)
+                
+                if followers.count < 100 { self.hasMoreFollowers = false}
+                self.followers.append(contentsOf: followers)
+                if followers.isEmpty {DispatchQueue.main.async {self.showEmptyStateView(with: "This user doesn't have any followers. Go follow them 😄.", in: self.view)}}
+                self.updateData(followers: self.followers)
                 
             case .failure(let error):
                 self.presentGFAlertOnMainThread(alertTitle: "Bad Stuff Happened", message: error.rawValue, buttonTitle: "OK")
@@ -84,4 +99,20 @@ class FollowerListVC: UIViewController {
         }
     }
     
+}
+
+
+extension FollowerListVC: UICollectionViewDelegate {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height // entire height of the whole scrollview which holds 100 cells
+        let height = scrollView.frame.size.height // height of the screen
+
+    
+        if height + offsetY > contentHeight {
+            guard hasMoreFollowers else { return }
+            page += 1
+            getFollowers(username: username, page: page)
+        }
+    }
 }
