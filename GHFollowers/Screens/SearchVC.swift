@@ -37,6 +37,7 @@ class SearchVC: UIViewController {
         appearance.configureWithTransparentBackground()
         appearance.shadowImage = nil
         appearance.shadowColor = nil
+        appearance.backgroundColor = UIColor.white
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
@@ -65,11 +66,6 @@ class SearchVC: UIViewController {
         //        self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.pushViewController(followerListVC, animated: true )
     }
-    
-    
-    
-    
-    
     
     //MARK: Configure UI
     func configureLogoImageView() {

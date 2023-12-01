@@ -11,6 +11,7 @@ class FollowerListVC: UIViewController {
 
     var username: String!
     var followers = [Follower]()
+    var filteredFollowers: [Follower] = []
     var collectionView: UICollectionView!
     var page = 1
     var hasMoreFollowers = true
@@ -32,7 +33,7 @@ class FollowerListVC: UIViewController {
         configureDataSource()
         collectionView.delegate = self
         getFollowers(username: username, page: page)
-        
+        configureSearchController()
        
     }
     
@@ -77,6 +78,16 @@ class FollowerListVC: UIViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
+    func configureSearchController() {
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = "Search for a username"
+        
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+    }
+    
     func getFollowers(username: String, page: Int) {
         showLoadingView()
         NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
@@ -115,4 +126,23 @@ extension FollowerListVC: UICollectionViewDelegate {
             getFollowers(username: username, page: page)
         }
     }
+}
+
+
+extension FollowerListVC: UISearchResultsUpdating,UISearchBarDelegate {
+    func updateSearchResults(for searchController: UISearchController) {
+        print(searchController.searchBar.text)
+        
+        guard let filter = searchController.searchBar.text, !filter.isEmpty else { 
+            updateData(followers: followers)
+            return } //nil or empty return
+        filteredFollowers = followers.filter{$0.login.lowercased().contains(filter.lowercased())}
+        updateData(followers: filteredFollowers)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//        filteredFollowers = followers
+        updateData(followers: followers)
+    }
+    
 }
