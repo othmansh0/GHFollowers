@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SafariServices
 fileprivate var containerView: UIView!
 extension UIViewController {
     
@@ -16,6 +16,14 @@ extension UIViewController {
             alertVC.modalPresentationStyle = .overFullScreen
             alertVC.modalTransitionStyle = .crossDissolve
             self.present(alertVC,animated: true)
+        }
+    }
+    
+    func presentSafariVC(with url: URL) {
+        DispatchQueue.main.async{
+            let safariVC = SFSafariViewController(url: url)
+            safariVC.preferredControlTintColor = .systemGreen
+            self.present(safariVC,animated: true)
         }
     }
     
